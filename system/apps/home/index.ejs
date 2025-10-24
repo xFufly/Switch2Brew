@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Switch2Brew</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/styles/main.css">
+    </head>
+    <body>
+        <div class="upper">
+            <div class="site-header">
+                <h2>Switch2Brew &nbsp; <span style="font-size:14px;color:#666">beta</span></h2>
+                <div class="status">
+                    <div class="applet">● Browser Mode ●</div>
+                    <div class="clock"><span id="clock"></span></div>
+                    <div class="small">file:/</div>
+                </div>
+            </div>
+            <div class="currentApp">
+                <div class="logo-area preview">
+                    <div class="big-art">
+                        <!-- placeholder art (inline SVG data URI) -->
+                        <img id="bigArtImg" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='100%25' height='100%25' fill='%23f2f2f2'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='18'%3ENo%20Art%3C/text%3E%3C/svg%3E" alt="app art">
+                    </div>
+                    <div class="meta">
+                        <div class="app-info">
+                            <h1>HB App Store</h1>
+                            <p>Author: 4TU Team<br>Version: 2.2</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="lower">
+            <div class="app-grid" id="appGrid">
+                <!-- Render only discovered apps -->
+                <% if (typeof apps !== 'undefined' && Array.isArray(apps)) { %>
+                    <% apps.forEach(function(app, i){ %>
+                        <div class="app-card <%= i===0 ? 'selected' : '' %>" data-id="<%= app.id %>" data-path="<%= app.path %>">
+                            <div class="title"><%= app.name %></div>
+                            <div class="thumb"><img src="<%= app.icon %>" alt="app icon" width="100%"></div>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+
+            <div class="bottom-hints">
+                <div class="controls hints">
+                    <div class="hint-pill">Y Settings</div>
+                </div>
+                <div class="controls hints">
+                    <div class="hint-pill">A Launch</div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/drivers/gamepad.js"></script>
+        <script>
+            // clock
+            function updateClock(){
+                const el = document.getElementById('clock');
+                const now = new Date();
+                const hh = String(now.getHours()).padStart(2,'0');
+                const mm = String(now.getMinutes()).padStart(2,'0');
+                const ss = String(now.getSeconds()).padStart(2,'0');
+                if (el) el.textContent = hh+':'+mm+':'+ss;
+            }
+            setInterval(updateClock,1000);
+            updateClock();
+
+            // selection/navigation (keyboard + gamepad)
+            (function(){
+                const KEY_REPEAT_DELAY = 150; // ms
+                let lastKeyTime = 0;
+
+                function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+                document.addEventListener('DOMContentLoaded', ()=>{
+                    const grid = document.getElementById('appGrid');
+                    if (!grid) return;
+                    const cards = Array.from(grid.querySelectorAll('.app-card'));
+                    if (!cards.length) return;
+
+                    let selectedIndex = cards.findIndex(c => c.classList.contains('selected'));
+                    if (selectedIndex < 0) selectedIndex = 0;
+
+                    async function applySelection(idx){
+                        idx = clamp(idx, 0, cards.length - 1);
+                        if (idx === selectedIndex) return;
+                        cards[selectedIndex].classList.remove('selected');
+                        selectedIndex = idx;
+                        const el = cards[selectedIndex];
+                        el.classList.add('selected');
+                        // ensure visible in horizontal layout
+                        try{ el.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch(e){}
+                        // fetch app info from server by id (more robust)
+                        const id = el.dataset && el.dataset.id;
+                        if (id) {
+                            fetch(`/api/app-info?id=${encodeURIComponent(id)}`)
+                                .then(r => r.json())
+                                .then(updatePreview)
+                                .catch(err => console.warn('app-info fetch failed', err));
+                        }
+                    }
+
+                    function move(dir){
+                        applySelection(selectedIndex + dir);
+                    }
+
+                    // update left preview with server info
+                    function updatePreview(info){
+                        const appInfoEl = document.querySelector('.app-info');
+                        const bigArtImg = document.getElementById('bigArtImg') || document.querySelector('.big-art img');
+                        const placeholder = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='100%25' height='100%25' fill='%23f2f2f2'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='18'%3ENo%20Art%3C/text%3E%3C/svg%3E";
+                        if (bigArtImg && info.icon){
+                            bigArtImg.src = info.icon;
+                            bigArtImg.alt = info.name + ' art';
+                        } else if (bigArtImg) {
+                            bigArtImg.src = placeholder;
+                        }
+                        if (!appInfoEl) return;
+                        const desc = info.description ? `<p style="margin-top:8px;color:#444">${info.description}</p>` : '';
+                        appInfoEl.innerHTML = `<h1>${info.name}</h1><p>Author: ${info.author}<br>Version: ${info.version}</p>${desc}`;
+                    }
+
+                    // attach hover handlers to prefetch info
+                    cards.forEach((c, i) => {
+                        c.addEventListener('mouseenter', () => {
+                            const id = c.dataset && c.dataset.id;
+                            if (id) {
+                                fetch(`/api/app-info?id=${encodeURIComponent(id)}`)
+                                    .then(r => r.json())
+                                    .then(updatePreview)
+                                    .catch(()=>{});
+                            }
+                        });
+                    });
+
+                    // gamepad support via GamepadDriver
+                    try {
+                        const driver = new GamepadDriver();
+                        driver.on('connected', gp => console.log('Gamepad connected', gp.id));
+
+                        // helper to resolve a button name (eg 'LEFT','RIGHT','A') to an index using
+                        // the `buttons` dictionary provided by drivers/gamepad.js. Fallback to numeric index.
+                        const resolveButton = (name, fallback) => {
+                            try{
+                                if (typeof buttons !== 'undefined'){
+                                    for (const k in buttons) if (buttons[k] === name) return parseInt(k,10);
+                                }
+                            }catch(e){}
+                            return fallback;
+                        };
+
+                        const resolveAxis = (axisName, fallback) => {
+                            try{
+                                if (typeof axis !== 'undefined'){
+                                    for (const k in axis) if (axis[k] && axis[k].name === axisName) return parseInt(k,10);
+                                }
+                            }catch(e){}
+                            return fallback;
+                        };
+
+                        const BTN_LEFT = resolveButton('LEFT', 14);
+                        const BTN_RIGHT = resolveButton('RIGHT', 15);
+                        const BTN_A = resolveButton('A', 1);
+                        const AXIS_LSX = resolveAxis('LSX', 0);
+
+                        driver.on('buttondown', e => {
+                            if (e.index === BTN_LEFT) move(-1);
+                            else if (e.index === BTN_RIGHT) move(1);
+                            else if (e.index === BTN_A){
+                                    const sel = cards[selectedIndex];
+                                    const id = sel && sel.dataset && sel.dataset.id;
+                                    const relPath = sel && sel.dataset && sel.dataset.path;
+                                    if (id && relPath) {
+                                        // redirect to the app's path
+                                        window.location.href = `/apps/${encodeURIComponent(id)}/${relPath}`;
+                                    } else {
+                                        console.log('Gamepad Launch (no path):', sel && sel.querySelector('.title')?.textContent);
+                                    }
+                                }
+                        });
+
+                        driver.on('axismove', e => {
+                            if (e.axis === AXIS_LSX){
+                                if (e.value <= -0.6) move(-1);
+                                else if (e.value >= 0.6) move(1);
+                            }
+                        });
+                    } catch(err) {
+                        console.warn('GamepadDriver not available', err);
+                    }
+
+                    // fetch preview for initial selection (by id)
+                    if (cards.length){
+                        const initial = cards[selectedIndex];
+                        const id = initial.dataset && initial.dataset.id;
+                        if (id){
+                            fetch(`/api/app-info?id=${encodeURIComponent(id)}`)
+                                .then(r=>r.json()).then(updatePreview).catch(()=>{});
+                        }
+                    }
+                });
+            })();
+        </script>
+
+    </body>
+</html>

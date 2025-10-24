@@ -1,0 +1,18 @@
+{
+  "name": "switch2brew",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "sudo node ./src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dgram": "^1.0.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "os": "^0.1.2",
+    "ws": "^8.13.0"
+  }
+}

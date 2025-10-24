@@ -1,0 +1,8 @@
+{
+    "name": "Hello World",
+    "version": "1.0.0",
+    "description": "A simple Hello World program for nintendo switch 2.",
+    "author": "DIDELOT Tim",
+    "path": "index.html",
+    "nodeScripts": []
+}

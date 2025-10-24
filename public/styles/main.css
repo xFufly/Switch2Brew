@@ -1,0 +1,204 @@
+:root {
+    --bg: #e9edf0;
+    --panel: #ffffff;
+    --accent: #31c5ff;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: #111
+}
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 28px;
+    border-bottom: 1px solid #eee
+}
+
+.site-header h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 22px;
+    color: #012233
+}
+
+.currentApp {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 18px 28px
+}
+
+.logo-area {
+    display: flex;
+    gap: 28px;
+    align-items: center
+}
+
+.logo-area.preview {
+    align-items: center;
+    padding-left: 40px
+}
+
+.big-art {
+    width: 300px;
+    height: 300px;
+    background: #444;
+    border-radius: 6px;
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.big-art img {
+    max-width: 88%;
+    max-height: 88%;
+    display: block
+}
+
+.meta {
+    padding-top: 6px
+}
+
+.meta h1 {
+    margin: 0;
+    font-size: 40px;
+    font-weight: 700
+}
+
+.meta p {
+    margin: 8px 0;
+    color: #333;
+    font-size: 15px
+}
+
+.status {
+    text-align: right;
+    padding-top: 8px
+}
+
+.status .applet {
+    color: #ff3b3b;
+    font-weight: 700
+}
+
+.status .clock {
+    font-size: 20px;
+    margin-top: 6px
+}
+
+.status .small {
+    color: #666;
+    font-size: 13px;
+}
+
+.lower {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 260px;
+    background: linear-gradient(180deg, #7bd6ff, #4bc0e6);
+    box-shadow: 0 -8px 0 rgba(0, 0, 0, 0.06);
+    padding: 28px 36px;
+    display: flex;
+    flex-direction: column;
+    z-index: 0;
+    padding-bottom: 80px;
+}
+
+.app-grid {
+    display: flex;
+    gap: 22px;
+    align-items: flex-end
+}
+
+.app-card {
+    width: 225px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px;
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease
+}
+
+/* Place title above the icon: title first then thumb */
+.app-card .title {
+    order: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+    text-align: center;
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.app-card .thumb {
+    order: 1;
+    width: 180px;
+    height: 180px;
+    background: #eee;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.app-card.selected {
+    outline: 6px solid rgba(0, 255, 200, 0.07);
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.06);
+    transform: translateY(-6px)
+}
+
+.bottom-hints {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    color: #012233;
+    z-index: 3
+}
+
+.hints .controls {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    align-items: center;
+}
+
+.hint-pill {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 14px;
+    border-radius: 24px;
+    font-weight: 700;
+    color: #012233;
+    font-size: 15px
+}
+
+/* responsive */
+@media (max-width:900px) {
+    .big-art {
+        width: 160px;
+        height: 160px
+    }
+
+    .meta h1 {
+        font-size: 26px
+    }
+}
+
+/* small utility */
+.hidden {
+    display: none
+}

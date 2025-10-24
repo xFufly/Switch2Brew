@@ -1,0 +1,38 @@
+<!-- Testing gamepad input -->
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <p id="gamepadstate"></p>
+        <p id="gamepadinfo"></p>
+    </body>
+    <script src="/drivers/gamepad.js"></script>
+    <script>
+        // Test here gamepad inputs (user will be able to test his gamepad)
+        const gamepads = new GamepadDriver();
+        const stateEl = document.getElementById("gamepadstate");
+
+        function updateState() {
+            stateEl.innerText = `Connected gamepads: ${gamepads.count()}`;
+            requestAnimationFrame(updateState);
+        }
+        updateState();
+
+        gamepads.on("connected", gp => {
+            const infoEl = document.getElementById("gamepadinfo");
+            infoEl.innerText = `🎮 Connected: ${gp.id}\n`;
+        });
+        gamepads.on("buttondown", e => {
+            const infoEl = document.getElementById("gamepadinfo");
+            infoEl.innerText = `⬇️ Button ${e.index}\n`;
+        });
+        gamepads.on("buttonup", e => {
+            const infoEl = document.getElementById("gamepadinfo");
+            infoEl.innerText = `⬆️ Button ${e.index}\n`;
+        });
+        gamepads.on("axismove", e => {
+            const infoEl = document.getElementById("gamepadinfo");
+            infoEl.innerText = `🌀 Axis ${e.axis} ${e.value.toFixed(2)}\n`;
+        });
+    </script>
+</html>
