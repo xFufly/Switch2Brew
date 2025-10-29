@@ -1,0 +1,8 @@
+{
+    "name": "BeeShop",
+    "version": "0.0.1",
+    "description": "An App Store for Switch2Brew.",
+    "author": "DIDELOT Tim",
+    "path": "index.html",
+    "nodeScripts": []
+}

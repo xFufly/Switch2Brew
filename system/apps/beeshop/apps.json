@@ -1,0 +1,38 @@
+[
+    {
+        "id": "afksimulator",
+        "name": "AFK Simulator",
+        "version": "1.0.0",
+        "description": "A game when being AFK for 1 minute makes you win.",
+        "author": "Gabriel Dunogué",
+        "repo": "https://...",
+        "category": "gaming"
+    },
+    {
+        "id": "helloworld",
+        "name": "Hello World",
+        "version": "1.0.0",
+        "description": "A simple Hello World program for nintendo switch 2.",
+        "author": "DIDELOT Tim",
+        "repo": "https://...",
+        "category": "others"
+    },
+    {
+        "id": "perplex.js",
+        "name": "Perplex.js",
+        "version": "1.0.0",
+        "description": "An app to interact with Perplexity AI's API on the Nintendo Switch (2).",
+        "author": "DIDELOT Tim",
+        "repo": "https://...",
+        "category": "ai"
+    },
+        {
+        "id": "browser",
+        "name": "Internet Browser",
+        "version": "0.0.0",
+        "description": "An app to surf on the web on the Nintendo Switch (2).",
+        "author": "DIDELOT Tim",
+        "repo": "https://...",
+        "category": "tools"
+    }
+]

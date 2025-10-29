@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') -%>
+    </head>
+    <body>
+        <%- include('../partials/nav'); -%>
+        <main>
+            <h1>All Apps</h1>
+            <section class="apps-container">
+                <% if (typeof apps !== 'undefined' && Array.isArray(apps)) { %>
+                    <% apps.forEach(function(app, i) { %>
+                            <div class="app-card <%= i===0 ? 'selected' : '' %>" data-id="<%= app.id %>" data-path="<%= app.path %>">
+                                <div class="thumb"><img src="<%= app.icon %>" alt="app icon" width="100%"></div>
+                                <div class="title"><%= app.name %></div>
+                                <p>
+                                    Author : <%= app.author %> <br>
+                                    Version : <%= app.version %> <br>
+                                    <%= app.description %>
+                                </p>
+                                <% if (app.installed) { %>
+                                    <p class="installed">Already Installed</p>
+                                <% } else { %>
+                                    <button class="btn">Install</button>
+                                <% } %>
+                            </div>
+                    <% }) %>
+                <% } %>
+            </section>
+        </main>
+    </body>
+</html>

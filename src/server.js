@@ -37,6 +37,16 @@ function discoverApps(){
     return apps;
 }
 
+function discoverShopApps(){
+    const apps = JSON.parse(fs.readFileSync(path.join(__dirname, "../system/apps/beeshop/apps.json"), "utf-8"));
+    const entries = fs.readdirSync(APPS_ROOT);
+    apps.forEach(app => {
+        app.installed = entries.includes(app.id);
+        app.icon = `/system/apps/beeshop/icons/${app.id}.png`; 
+    });
+    return apps;
+}
+
 // Serve each app's public folder under /apps/<id>/public
 if (fs.existsSync(APPS_ROOT)){
     const sub = fs.readdirSync(APPS_ROOT, { withFileTypes: true });
@@ -59,6 +69,12 @@ app.set('view engine', 'ejs');
 app.get('/', (req, res) => {
     const apps = discoverApps();
     res.render('home/index', { apps });
+});
+
+// Simple route that renders the shop app view
+app.get('/shop/', (req, res) => {
+    const apps = discoverShopApps();
+    res.render('beeshop/pages/index', { apps });
 });
 
 // API to fetch app info by id or name
