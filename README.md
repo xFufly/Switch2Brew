@@ -107,10 +107,6 @@ Contributions are welcome. A good start is:
 
 Please follow repository coding styles and keep changes focused.
 
-## License
-
-This repository currently includes an `ISC` license entry in `package.json`. If you want a different license, please open an issue to discuss.
-
 ## Contact
 
 If you want to collaborate, open an issue or send a PR. For quick questions, reference the repository and a maintainer will follow up.
